@@ -26,14 +26,17 @@ def draw_number(
     boards: List[List[List[int]]],
     positions: Dict[int, List[Tuple[int, int, int]]],
     drawn: int,
-) -> Optional[int]:
-    won: Optional[int] = None
+) -> List[Optional[int]]:
+    won: List[Optional[int]] = [None]
 
     for board in positions[drawn]:
         boards[board[0]][board[1]][board[2]] = -1
 
-        if board_won(boards, board) and won is None:
-            won = board[0]
+        if board_won(boards, board):
+            if won[0] is None:
+                won[0] = board[0]
+            else:
+                won.append(board[0])
 
     return won
 
@@ -42,12 +45,22 @@ def play(
     draws: List[int],
     boards: List[List[List[int]]],
     positions: Dict[int, List[Tuple[int, int, int]]],
+    first: bool,
 ) -> int:
+    won_already = []
+
     for drawn in draws:
         draw_result = draw_number(boards, positions, drawn)
 
-        if draw_result is not None:
-            return board_sum(boards, draw_result) * drawn
+        if first and draw_result[0] is not None:
+            return board_sum(boards, draw_result[0]) * drawn
+
+        won_already.extend([x for x in draw_result if x is not None])
+        for key in positions.keys():
+            positions[key] = [x for x in positions[key] if x[0] not in draw_result]
+
+        if len(won_already) == len(boards):
+            return board_sum(boards, won_already[-1]) * drawn
 
     assert False
 
@@ -66,4 +79,5 @@ with open("data.txt") as f:
             board.append(row)
         boards.append(board)
 
-    print(play(draws, boards, positions))
+    print(play(draws, boards, positions, True))
+    print(play(draws, boards, positions, False))

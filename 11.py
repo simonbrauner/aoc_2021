@@ -46,10 +46,22 @@ def count_flashes(data: List[List[int]]) -> int:
     return total_flashes
 
 
+def all_flashes_turn(data: List[List[int]]) -> int:
+    turn = 0
+
+    while True:
+        turn += 1
+
+        increment_all(data)
+        if flash(data) == len(data) * len(data[0]):
+            return turn
+
+
 with open("data.txt") as f:
     data = []
 
     for line in f:
         data.append([int(x) for x in line.strip()])
 
-    print(count_flashes(data))
+    print(count_flashes([x[:] for x in data]))
+    print(all_flashes_turn(data))

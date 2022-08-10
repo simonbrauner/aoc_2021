@@ -33,7 +33,13 @@ def create_instruction(raw_instruction: str) -> Tuple[str, int]:
 
 
 def fold_left(paper: List[List[str]], index: int) -> None:
-    pass
+    for x in range(1, index + 1):
+        for y in range(len(paper)):
+            if paper[y][index + x] == "#":
+                paper[y][index - x] = "#"
+
+    for line in paper:
+        del line[index:]
 
 
 def fold_up(paper: List[List[str]], index: int) -> None:
@@ -45,11 +51,12 @@ def fold_up(paper: List[List[str]], index: int) -> None:
     del paper[index:]
 
 
-def fold(paper: List[List[str]], instruction: Tuple[str, int]) -> None:
-    if instruction[0] == "x":
-        fold_left(paper, instruction[1])
-    else:
-        fold_up(paper, instruction[1])
+def fold(paper: List[List[str]], instructions: List[Tuple[str, int]]) -> None:
+    for instruction in instructions:
+        if instruction[0] == "x":
+            fold_left(paper, instruction[1])
+        else:
+            fold_up(paper, instruction[1])
 
 
 def first_fold_dot_count(
@@ -57,7 +64,7 @@ def first_fold_dot_count(
 ) -> int:
     result = 0
 
-    fold(paper, instructions[0])
+    fold(paper, instructions[:1])
 
     for line in paper:
         for char in line:
@@ -65,6 +72,11 @@ def first_fold_dot_count(
                 result += 1
 
     return result
+
+
+def fold_all_and_print(paper: List[List[str]], instructions: List[Tuple[str, int]]) -> None:
+    fold(paper, instructions)
+    print_paper(paper)
 
 
 with open("data.txt") as f:
@@ -85,6 +97,4 @@ with open("data.txt") as f:
         instructions.append(create_instruction(line))
 
     print(first_fold_dot_count(create_paper(dots), instructions))
-    paper = create_paper(dots)
-    fold(paper, instructions[0])
-    print_paper(paper)
+    fold_all_and_print(create_paper(dots), instructions)

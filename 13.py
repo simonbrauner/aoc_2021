@@ -74,7 +74,9 @@ def first_fold_dot_count(
     return result
 
 
-def fold_all_and_print(paper: List[List[str]], instructions: List[Tuple[str, int]]) -> None:
+def fold_all_and_print(
+    paper: List[List[str]], instructions: List[Tuple[str, int]]
+) -> None:
     fold(paper, instructions)
     print_paper(paper)
 

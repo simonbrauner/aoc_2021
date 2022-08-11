@@ -52,6 +52,36 @@ def lowest_total_risk(
     return total_risks[-1]
 
 
+def new_risk(number: int, tile: int) -> int:
+    added = number + tile
+    if added < 10:
+        return added % 10
+    else:
+        return (added + 1) % 10
+
+
+def extended_data(risks: List[int], row_length: int, col_length: int) -> List[int]:
+    result = []
+    index = 0
+
+    for col_index in range(col_length):
+        row = []
+
+        for row_index in range(row_length):
+            row.append(risks[index])
+            index += 1
+
+        for tile in range(5):
+            for number in row:
+                result.append(new_risk(number, tile))
+
+    for tile in range(1, 5):
+        for number in result[: row_length * col_length * 5]:
+            result.append(new_risk(number, tile))
+
+    return result
+
+
 with open("data.txt") as f:
     risks = []
     col_length = 0
@@ -62,5 +92,7 @@ with open("data.txt") as f:
             risks.append(int(char))
 
     row_length = len(risks) // col_length
+    longer_risks = extended_data(risks, row_length, col_length)
 
     print(lowest_total_risk(risks, row_length, col_length))
+    print(lowest_total_risk(longer_risks, row_length * 5, col_length * 5))

@@ -1,3 +1,5 @@
+from typing import Callable, Tuple
+from math import prod
 from collections import deque
 
 
@@ -5,6 +7,15 @@ PACKET_LITERAL = 4
 LENGTH_TYPE_NUMBER_OF_BITS = 0
 LENGTH_TYPE_NUMBER_OF_PACKETS = 1
 LENGTH_TYPE_COUNTS = {0: 15, 1: 11}
+OPERATORS: dict[int, Callable[[list[int]], int]] = {
+    0: sum,
+    1: prod,
+    2: min,
+    3: max,
+    5: lambda x: 1 if x[0] > x[1] else 0,
+    6: lambda x: 1 if x[0] < x[1] else 0,
+    7: lambda x: 1 if x[0] == x[1] else 0,
+}
 
 
 def add_hex_to_bits(bits: deque[int], letter: str) -> None:
@@ -41,14 +52,14 @@ def read_number(bits: deque[int]) -> int:
     return read_bits(number_bits, len(number_bits))
 
 
-def read_packets(bits: deque[int]) -> int:
+def read_packets(bits: deque[int]) -> Tuple[int, int]:
     version_sum = read_bits(bits, 3)
     packet_type = read_bits(bits, 3)
 
     if packet_type == PACKET_LITERAL:
-        read_number(bits)
-        return version_sum
+        return version_sum, read_number(bits)
 
+    operands = []
     length_type = read_bits(bits, 1)
     length = read_bits(bits, LENGTH_TYPE_COUNTS[length_type])
 
@@ -56,12 +67,16 @@ def read_packets(bits: deque[int]) -> int:
         total_length = len(bits)
 
         while len(bits) > total_length - length:
-            version_sum += read_packets(bits)
+            result = read_packets(bits)
+            version_sum += result[0]
+            operands.append(result[1])
     else:
         for _ in range(length):
-            version_sum += read_packets(bits)
+            result = read_packets(bits)
+            version_sum += result[0]
+            operands.append(result[1])
 
-    return version_sum
+    return version_sum, OPERATORS[packet_type](operands)
 
 
 with open("data.txt") as f:
@@ -70,4 +85,6 @@ with open("data.txt") as f:
     for letter in f.readline().strip():
         add_hex_to_bits(bits, letter)
 
-    print(read_packets(bits))
+    result = read_packets(bits)
+    print(result[0])
+    print(result[1])

@@ -1,50 +1,37 @@
-from typing import Iterator
+from dataclasses import dataclass
 
 
+DETERMINISTIC_DICE = range(1, 101)
+SCORES = [10] + list(range(1, 10))
+
+
+@dataclass
 class Player:
-    def __init__(self, starting_space: int, die: Iterator[int]):
-        self.space = starting_space
-        self.die = die
-        self.score = 0
-
-    def play_turn(self) -> None:
-        for _ in range(3):
-            self.space += next(self.die)
-
-        self.space %= 10
-        if self.space == 0:
-            self.space += 10
-
-        self.score += self.space
-
-    def won(self) -> bool:
-        return self.score >= 1000
+    space: int
+    score = 0
 
 
-def roll_dice() -> Iterator[int]:
-    while True:
-        for side in range(1, 101):
-            yield side
-
-
-def play(players: list[Player]) -> int:
+def play_deterministic(first_start: int, second_start: int) -> int:
+    active = Player(first_start)
+    passive = Player(second_start)
     rolls = 0
 
     while True:
-        for player in players:
-            player.play_turn()
-            rolls += 3
+        for _ in range(3):
+            active.space += DETERMINISTIC_DICE[rolls % len(DETERMINISTIC_DICE)]
+            rolls += 1
 
-            if player.won():
-                losers = [x for x in players if x is not player]
-                return losers[0].score * rolls
+        active.score += SCORES[active.space % len(SCORES)]
+        if active.score >= 1000:
+            return passive.score * rolls
+
+        active, passive = passive, active
 
 
 with open("data.txt") as f:
-    players = []
-    die = roll_dice()
+    starts = []
 
     for line in f:
-        players.append(Player(int(line.split(": ")[1]), die))
+        starts.append(int(line.split(": ")[1]))
 
-    print(play(players))
+    print(play_deterministic(starts[0], starts[1]))

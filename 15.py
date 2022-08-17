@@ -1,8 +1,7 @@
-from typing import List, Set, Union, Tuple
 from heapq import heappop, heappush
 
 
-def neighbors(vertex: int, row_length: int, col_length: int) -> Set[int]:
+def neighbors(vertex: int, row_length: int, col_length: int) -> set[int]:
     possible_neighbors = {
         vertex + x
         for x in [-1, 1, -row_length, row_length]
@@ -18,7 +17,7 @@ def neighbors(vertex: int, row_length: int, col_length: int) -> Set[int]:
 
 
 def relax(
-    total_risks: List[Union[float, int]], risks: List[int], left: int, right: int
+    total_risks: list[float | int], risks: list[int], left: int, right: int
 ) -> bool:
     new_distance = total_risks[left] + risks[right]
 
@@ -30,12 +29,12 @@ def relax(
 
 
 def lowest_total_risk(
-    risks: List[int], row_length: int, col_length: int
-) -> Union[float, int]:
+    risks: list[int], row_length: int, col_length: int
+) -> float | int:
     total_risks = [float("inf") for _ in range(len(risks))]
     total_risks[0] = 0
     done = [False for _ in range(len(risks))]
-    priority_queue: List[Tuple[Union[float, int], int]] = [(0, 0)]
+    priority_queue: list[tuple[float | int, int]] = [(0, 0)]
 
     while priority_queue:
         _, current = heappop(priority_queue)
@@ -60,7 +59,7 @@ def new_risk(number: int, tile: int) -> int:
         return (added + 1) % 10
 
 
-def extended_data(risks: List[int], row_length: int, col_length: int) -> List[int]:
+def extended_data(risks: list[int], row_length: int, col_length: int) -> list[int]:
     result = []
     index = 0
 

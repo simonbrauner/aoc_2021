@@ -1,8 +1,7 @@
-from typing import List
 from collections import Counter
 
 
-def next_fish(fish: List[int]) -> List[int]:
+def next_fish(fish: list[int]) -> list[int]:
     result = [0 for _ in range(9)]
 
     for index in range(8):
@@ -14,7 +13,7 @@ def next_fish(fish: List[int]) -> List[int]:
     return result
 
 
-def fish_after_days(data: List[int], days: int) -> int:
+def fish_after_days(data: list[int], days: int) -> int:
     counter = Counter(data)
     fish = [counter[x] for x in range(9)]
 

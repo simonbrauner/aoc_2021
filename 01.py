@@ -1,7 +1,4 @@
-from typing import List
-
-
-def times_increased_shifted(shift: int, data: List[int]) -> int:
+def times_increased_shifted(shift: int, data: list[int]) -> int:
     result = 0
 
     for i in range(len(data) - shift):

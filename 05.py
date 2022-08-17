@@ -1,4 +1,3 @@
-from typing import Dict, List, Tuple
 from collections import defaultdict
 
 
@@ -11,8 +10,8 @@ def pick_increment(left: int, right: int) -> int:
     return -1
 
 
-def overlapping_points(data: List[List[int]], horizontal_vertical: bool) -> int:
-    vents: Dict[Tuple[int, int], int] = defaultdict(int)
+def overlapping_points(data: list[list[int]], horizontal_vertical: bool) -> int:
+    vents: dict[tuple[int, int], int] = defaultdict(int)
 
     for point in data:
         left_x, left_y, right_x, right_y = point

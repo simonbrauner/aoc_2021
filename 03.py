@@ -1,14 +1,11 @@
-from typing import List
-
-
-def most_common_bit(data: List[str], index: int) -> str:
+def most_common_bit(data: list[str], index: int) -> str:
     if len([x for x in data if x[index] == "1"]) >= len(data) / 2:
         return "1"
 
     return "0"
 
 
-def gamma_epsilon(data: List[str]) -> int:
+def gamma_epsilon(data: list[str]) -> int:
     gamma = 0
     epsilon = 0
 
@@ -24,7 +21,7 @@ def gamma_epsilon(data: List[str]) -> int:
     return gamma * epsilon
 
 
-def oxygen_co2(data: List[str]) -> int:
+def oxygen_co2(data: list[str]) -> int:
     oxygen = data[:]
     co2 = data[:]
 

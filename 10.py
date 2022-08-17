@@ -1,12 +1,9 @@
-from typing import List
-
-
 OPENING = {"(": ")", "[": "]", "{": "}", "<": ">"}
 CLOSING_SYNTAX = {")": 3, "]": 57, "}": 1197, ">": 25137}
 CLOSING_AUTOCOMPLETE = {")": 1, "]": 2, "}": 3, ">": 4}
 
 
-def syntax_error_score(data: List[str]) -> int:
+def syntax_error_score(data: list[str]) -> int:
     result = 0
 
     for line in data:
@@ -22,7 +19,7 @@ def syntax_error_score(data: List[str]) -> int:
     return result
 
 
-def autocomplete_score(opened: List[str]) -> int:
+def autocomplete_score(opened: list[str]) -> int:
     score = 0
 
     for delimiter in reversed(opened):
@@ -32,7 +29,7 @@ def autocomplete_score(opened: List[str]) -> int:
     return score
 
 
-def autocomplete_score_middle(data: List[str]) -> int:
+def autocomplete_score_middle(data: list[str]) -> int:
     scores = []
 
     for line in data:

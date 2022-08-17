@@ -1,9 +1,8 @@
-from typing import Dict, List, Set
 from collections import defaultdict
 
 
 def path_count(
-    data: Dict[str, List[str]], visited: Set[str], current: str, one_twice: bool
+    data: dict[str, list[str]], visited: set[str], current: str, one_twice: bool
 ) -> int:
     if current == "end":
         return 1

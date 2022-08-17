@@ -1,8 +1,7 @@
-from typing import List
 from math import prod
 
 
-def is_lowest_point(x: int, y: int, data: List[List[int]]) -> bool:
+def is_lowest_point(x: int, y: int, data: list[list[int]]) -> bool:
     current = data[y][x]
 
     return all(
@@ -15,7 +14,7 @@ def is_lowest_point(x: int, y: int, data: List[List[int]]) -> bool:
     )
 
 
-def risk_level(data: List[List[int]]) -> int:
+def risk_level(data: list[list[int]]) -> int:
     result = 0
 
     for x in range(len(data[0])):
@@ -26,7 +25,7 @@ def risk_level(data: List[List[int]]) -> int:
     return result
 
 
-def basin_size(x: int, y: int, data: List[List[int]]) -> int:
+def basin_size(x: int, y: int, data: list[list[int]]) -> int:
     result = 1
     data[y][x] = 9
 
@@ -42,7 +41,7 @@ def basin_size(x: int, y: int, data: List[List[int]]) -> int:
     return result
 
 
-def basin_size_product(data: List[List[int]]) -> int:
+def basin_size_product(data: list[list[int]]) -> int:
     sizes = []
 
     for x in range(len(data[0])):

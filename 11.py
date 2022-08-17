@@ -1,13 +1,10 @@
-from typing import List
-
-
-def increment_all(data: List[List[int]]) -> None:
+def increment_all(data: list[list[int]]) -> None:
     for line in data:
         for x in range(len(line)):
             line[x] += 1
 
 
-def increment_neighbors(x: int, y: int, data: List[List[int]]) -> None:
+def increment_neighbors(x: int, y: int, data: list[list[int]]) -> None:
     for dx in -1, 0, 1:
         for dy in -1, 0, 1:
             if (
@@ -18,7 +15,7 @@ def increment_neighbors(x: int, y: int, data: List[List[int]]) -> None:
                 data[y + dy][x + dx] += 1
 
 
-def flash(data: List[List[int]]) -> int:
+def flash(data: list[list[int]]) -> int:
     flashes = 0
     someone_flashed = True
 
@@ -36,7 +33,7 @@ def flash(data: List[List[int]]) -> int:
     return flashes
 
 
-def count_flashes(data: List[List[int]]) -> int:
+def count_flashes(data: list[list[int]]) -> int:
     total_flashes = 0
 
     for step in range(100):
@@ -46,7 +43,7 @@ def count_flashes(data: List[List[int]]) -> int:
     return total_flashes
 
 
-def all_flashes_turn(data: List[List[int]]) -> int:
+def all_flashes_turn(data: list[list[int]]) -> int:
     turn = 0
 
     while True:

@@ -1,7 +1,4 @@
-from typing import List
-
-
-def remove_from_boards(number: int, boards: List[List[List[int]]]) -> None:
+def remove_from_boards(number: int, boards: list[list[list[int]]]) -> None:
     for board in boards:
         for row in board:
             for x in range(5):
@@ -9,7 +6,7 @@ def remove_from_boards(number: int, boards: List[List[List[int]]]) -> None:
                     row[x] = -1
 
 
-def board_won(board: List[List[int]]) -> bool:
+def board_won(board: list[list[int]]) -> bool:
     for i in range(5):
         if all([board[i][j] == -1 for j in range(5)]) or all(
             [board[j][i] == -1 for j in range(5)]
@@ -19,7 +16,7 @@ def board_won(board: List[List[int]]) -> bool:
     return False
 
 
-def board_sum(board: List[List[int]]) -> int:
+def board_sum(board: list[list[int]]) -> int:
     result = 0
 
     for row in board:
@@ -31,8 +28,8 @@ def board_sum(board: List[List[int]]) -> int:
 
 
 def play(
-    draws: List[int],
-    boards: List[List[List[int]]],
+    draws: list[int],
+    boards: list[list[list[int]]],
     first: bool,
 ) -> int:
     for drawn in draws:
@@ -52,7 +49,7 @@ def play(
 
 with open("data.txt") as f:
     draws = [int(x) for x in f.readline().split(",")]
-    boards: List[List[List[int]]] = []
+    boards: list[list[list[int]]] = []
 
     while f.readline():
         board = []

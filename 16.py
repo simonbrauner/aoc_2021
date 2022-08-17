@@ -1,4 +1,4 @@
-from typing import Callable, Tuple
+from collections.abc import Callable
 from math import prod
 from collections import deque
 
@@ -52,7 +52,7 @@ def read_number(bits: deque[int]) -> int:
     return read_bits(number_bits, len(number_bits))
 
 
-def read_packets(bits: deque[int]) -> Tuple[int, int]:
+def read_packets(bits: deque[int]) -> tuple[int, int]:
     version_sum = read_bits(bits, 3)
     packet_type = read_bits(bits, 3)
 

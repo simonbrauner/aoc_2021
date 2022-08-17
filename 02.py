@@ -1,7 +1,4 @@
-from typing import List, Tuple
-
-
-def final_position(data: List[Tuple[str, int]], with_aim: bool) -> int:
+def final_position(data: list[tuple[str, int]], with_aim: bool) -> int:
     horizontal = 0
     depth = 0
     aim = 0

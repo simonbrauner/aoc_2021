@@ -1,4 +1,3 @@
-from typing import List, Union
 from collections import Counter
 
 
@@ -11,7 +10,7 @@ def fuel_consumption(first: int, second: int, constant_rate: bool) -> int:
     return (distance * (1 + distance)) // 2
 
 
-def minimal_fuel(data: List[int], constant_rate: bool) -> Union[float, int]:
+def minimal_fuel(data: list[int], constant_rate: bool) -> float | int:
     result = float("inf")
     counter = Counter(data)
 

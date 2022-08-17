@@ -1,14 +1,13 @@
-from typing import Dict
 from collections import Counter, defaultdict
 
 
 def template_after_steps(
-    template: Dict[str, int], rules: Dict[str, str], steps: int
-) -> Dict[str, int]:
+    template: dict[str, int], rules: dict[str, str], steps: int
+) -> dict[str, int]:
     before_step = template
 
     for _ in range(steps):
-        after_step: Dict[str, int] = defaultdict(int)
+        after_step: dict[str, int] = defaultdict(int)
 
         for pair, quantity in before_step.items():
             after_step[pair[0] + rules[pair]] += quantity
@@ -20,10 +19,10 @@ def template_after_steps(
 
 
 def polymer_subtraction(
-    template: Dict[str, int], corners: str, rules: Dict[str, str], steps: int
+    template: dict[str, int], corners: str, rules: dict[str, str], steps: int
 ) -> int:
     after_steps = template_after_steps(template, rules, steps)
-    element_quantities: Dict[str, float] = defaultdict(int)
+    element_quantities: dict[str, float] = defaultdict(int)
 
     for pair, quantity in after_steps.items():
         for element in pair:

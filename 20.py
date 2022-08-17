@@ -73,3 +73,4 @@ with open("data.txt") as f:
         image.append([1 if x == "#" else 0 for x in line.strip()])
 
     print(count_lit_pixels(enhance(enhancement, image, 2)))
+    print(count_lit_pixels(enhance(enhancement, image, 50)))

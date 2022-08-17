@@ -38,28 +38,38 @@ def play_quantum(first_start: int, second_start: int) -> int:
     active = Player(first_start)
     passive = Player(second_start)
 
-    return max(play_quantum_rec(active, passive))
+    return max(play_quantum_rec(active, passive, {}))
 
 
-def play_quantum_rec(active: Player, passive: Player) -> tuple[int, int]:
+def play_quantum_rec(
+    active: Player,
+    passive: Player,
+    subresults: dict[tuple[int, int, int, int], tuple[int, int]],
+) -> tuple[int, int]:
     if passive.score >= 21:
         return 1, 0
 
-    active_win = 0
-    passive_win = 0
+    state = active.space, active.score, passive.space, passive.score
 
-    for value, quantity in QUANTUM_ROLLS.items():
-        subresult = play_quantum_rec(
-            passive,
-            Player(
-                active.space + value,
-                active.score + SCORES[(active.space + value) % len(SCORES)],
-            ),
-        )
-        active_win += subresult[0] * quantity
-        passive_win += subresult[1] * quantity
+    if state not in subresults:
+        active_win = 0
+        passive_win = 0
 
-    return passive_win, active_win
+        for value, quantity in QUANTUM_ROLLS.items():
+            subresult = play_quantum_rec(
+                passive,
+                Player(
+                    active.space + value,
+                    active.score + SCORES[(active.space + value) % len(SCORES)],
+                ),
+                subresults,
+            )
+            active_win += subresult[0] * quantity
+            passive_win += subresult[1] * quantity
+
+        subresults[state] = passive_win, active_win
+
+    return subresults[state]
 
 
 with open("data.txt") as f:

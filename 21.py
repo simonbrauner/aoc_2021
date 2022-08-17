@@ -1,9 +1,14 @@
 from dataclasses import dataclass
+from collections import Counter
 
 
 DETERMINISTIC_DICE = range(1, 101)
-QUANTUM_DICE = range(1, 4)
 SCORES = [10] + list(range(1, 10))
+
+QUANTUM_DICE = range(1, 4)
+QUANTUM_ROLLS = Counter(
+    [x + y + z for x in QUANTUM_DICE for y in QUANTUM_DICE for z in QUANTUM_DICE]
+)
 
 
 @dataclass
@@ -43,20 +48,16 @@ def play_quantum_rec(active: Player, passive: Player) -> tuple[int, int]:
     active_win = 0
     passive_win = 0
 
-    for first in QUANTUM_DICE:
-        for second in QUANTUM_DICE:
-            for third in QUANTUM_DICE:
-                total = first + second + third
-
-                subresult = play_quantum_rec(
-                    passive,
-                    Player(
-                        active.space + total,
-                        active.score + SCORES[(active.space + total) % len(SCORES)],
-                    ),
-                )
-                active_win += subresult[0]
-                passive_win += subresult[1]
+    for value, quantity in QUANTUM_ROLLS.items():
+        subresult = play_quantum_rec(
+            passive,
+            Player(
+                active.space + value,
+                active.score + SCORES[(active.space + value) % len(SCORES)],
+            ),
+        )
+        active_win += subresult[0] * quantity
+        passive_win += subresult[1] * quantity
 
     return passive_win, active_win
 

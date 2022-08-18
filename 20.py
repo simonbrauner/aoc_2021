@@ -1,7 +1,7 @@
 Image = list[list[int]]
 
 
-def count_lit_pixels(image: list[list[int]]) -> int:
+def count_lit_pixels(image: Image) -> int:
     return sum([x.count(1) for x in image])
 
 

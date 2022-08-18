@@ -17,40 +17,7 @@ class Area:
         )
 
 
-def highest_y_position(area: Area, vx: int, vy: int) -> int:
-    x = 0
-    y = 0
-    highest_y = 0
-    was_in_area = False
-
-    while x <= area.max_x and y >= area.min_y:
-        x += vx
-        y += vy
-        vx = max(vx - 1, 0)
-        vy -= 1
-
-        if y > highest_y:
-            highest_y = y
-
-        if (x, y) in area:
-            was_in_area = True
-
-    return highest_y if was_in_area else 0
-
-
-def total_highest_y_position(area: Area) -> int:
-    result = 0
-
-    for vx in range(area.max_x + 1):
-        for vy in range(MAGIC_CONSTANT):
-            current = highest_y_position(area, vx, vy)
-            if current > result:
-                result = current
-
-    return result
-
-
-def is_suitable_starting_velocity(area: Area, vx: int, vy: int) -> int:
+def reaches_area(area: Area, vx: int, vy: int) -> bool:
     x = 0
     y = 0
 
@@ -66,22 +33,27 @@ def is_suitable_starting_velocity(area: Area, vx: int, vy: int) -> int:
     return False
 
 
-def suitable_starting_velocities_count(area: Area) -> int:
-    result = 0
+def positions_to_reach_area(area: Area) -> list[tuple[int, int]]:
+    positions = []
 
     for vx in range(area.max_x + 1):
         for vy in range(area.min_y, MAGIC_CONSTANT):
-            if is_suitable_starting_velocity(area, vx, vy):
-                result += 1
+            if reaches_area(area, vx, vy):
+                positions.append((vx, vy))
 
-    return result
+    return positions
+
+
+def probe_calculations(area: Area) -> None:
+    positions = positions_to_reach_area(area)
+    print(sum(range(max(positions, key=lambda x: x[1])[1] + 1)))
+    print(len(positions))
 
 
 with open("data.txt") as f:
     line = f.readline().strip()
     min_x, max_x = map(int, line.split("x=")[1].split(",")[0].split(".."))
     min_y, max_y = map(int, line.split("y=")[1].split(".."))
-    area = Area(min_x, max_x, min_y, max_y)
 
-    print(total_highest_y_position(area))
-    print(suitable_starting_velocities_count(area))
+    area = Area(min_x, max_x, min_y, max_y)
+    probe_calculations(area)

@@ -12,7 +12,9 @@ class Area:
     max_y: int
 
     def __contains__(self, item: tuple[int, int]) -> bool:
-        return self.min_x <= item[0] <= self.max_x and self.min_y <= item[1] <= self.max_y
+        return (
+            self.min_x <= item[0] <= self.max_x and self.min_y <= item[1] <= self.max_y
+        )
 
 
 def highest_y_position(area: Area, vx: int, vy: int) -> int:
@@ -48,6 +50,33 @@ def total_highest_y_position(area: Area) -> int:
     return result
 
 
+def is_suitable_starting_velocity(area: Area, vx: int, vy: int) -> int:
+    x = 0
+    y = 0
+
+    while x <= area.max_x and y >= area.min_y:
+        x += vx
+        y += vy
+        vx = max(vx - 1, 0)
+        vy -= 1
+
+        if (x, y) in area:
+            return True
+
+    return False
+
+
+def suitable_starting_velocities_count(area: Area) -> int:
+    result = 0
+
+    for vx in range(area.max_x + 1):
+        for vy in range(area.min_y, MAGIC_CONSTANT):
+            if is_suitable_starting_velocity(area, vx, vy):
+                result += 1
+
+    return result
+
+
 with open("data.txt") as f:
     line = f.readline().strip()
     min_x, max_x = map(int, line.split("x=")[1].split(",")[0].split(".."))
@@ -55,3 +84,4 @@ with open("data.txt") as f:
     area = Area(min_x, max_x, min_y, max_y)
 
     print(total_highest_y_position(area))
+    print(suitable_starting_velocities_count(area))

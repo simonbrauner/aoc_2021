@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 
 
-MAGIC_CONSTANT = 200
-
-
 @dataclass
 class Area:
     min_x: int
@@ -37,7 +34,7 @@ def positions_to_reach_area(area: Area) -> list[tuple[int, int]]:
     positions = []
 
     for vx in range(area.max_x + 1):
-        for vy in range(area.min_y, MAGIC_CONSTANT):
+        for vy in range(area.min_y, -area.min_y):
             if reaches_area(area, vx, vy):
                 positions.append((vx, vy))
 

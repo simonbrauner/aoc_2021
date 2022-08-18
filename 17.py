@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-MAGIC_CONSTANT = 500
+MAGIC_CONSTANT = 200
 
 
 @dataclass

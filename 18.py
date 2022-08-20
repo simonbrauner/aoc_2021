@@ -48,7 +48,7 @@ class Pair:
             )
 
             self.increment_left(self.left)
-            self.increment_left(self.right)
+            self.increment_right(self.right)
             if self.is_left:
                 self.parent.left = 0
             else:
@@ -61,10 +61,44 @@ class Pair:
         )
 
     def increment_left(self, value: int) -> None:
-        pass
+        current = self
+
+        while current.is_left and current.parent is not None:
+            current = current.parent
+
+        if current.parent is None:
+            return
+
+        if isinstance(current.parent.left, int):
+            current.parent.left += value
+            return
+
+        current = current.parent.left
+
+        while isinstance(current.right, Pair):
+            current = current.right
+
+        current.right += value
 
     def increment_right(self, value: int) -> None:
-        pass
+        current = self
+
+        while not current.is_left and current.parent is not None:
+            current = current.parent
+
+        if current.parent is None:
+            return
+
+        if isinstance(current.parent.right, int):
+            current.parent.right += value
+            return
+
+        current = current.parent.right
+
+        while isinstance(current.left, Pair):
+            current = current.left
+
+        current.left += value
 
     def __add__(self, other: Pair) -> Pair:
         added = Pair(self, other)
@@ -89,4 +123,5 @@ with open("data.txt") as f:
         assert isinstance(number, Pair)
         numbers.append(number)
 
+    print(numbers)
     print(Pair.add_all(numbers))

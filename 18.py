@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import deepcopy
 
 
 class Pair:
@@ -129,7 +130,7 @@ class Pair:
         current.left += value
 
     def __add__(self, other: Pair) -> Pair:
-        added = Pair(self, other)
+        added = Pair(deepcopy(self), deepcopy(other))
         added.reduce()
         return added
 
@@ -142,6 +143,15 @@ class Pair:
 
         return current
 
+    @staticmethod
+    def largest_magnitude(pairs: list[Pair]) -> int:
+        return max([(x + y).magnitude() for x in pairs for y in pairs if x != y])
+
+    def magnitude(self) -> int:
+        return 3 * (
+            self.left if isinstance(self.left, int) else self.left.magnitude()
+        ) + 2 * (self.right if isinstance(self.right, int) else self.right.magnitude())
+
 
 with open("data.txt") as f:
     numbers = []
@@ -151,5 +161,5 @@ with open("data.txt") as f:
         assert isinstance(number, Pair)
         numbers.append(number)
 
-    print(numbers)
-    print(Pair.add_all(numbers))
+    print(Pair.add_all(numbers).magnitude())
+    print(Pair.largest_magnitude(numbers))

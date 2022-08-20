@@ -37,13 +37,17 @@ class Pair:
     def reduce(self) -> None:
         pass
 
+    def __add__(self, other: Pair) -> Pair:
+        added = Pair(self, other)
+        added.reduce()
+        return added
+
     @staticmethod
-    def add(pairs: list[Pair]) -> Pair:
+    def add_all(pairs: list[Pair]) -> Pair:
         current = pairs[0]
 
         for other in pairs[1:]:
-            current = Pair(current, other)
-            current.reduce()
+            current += Pair(current, other)
 
         return current
 
@@ -56,4 +60,4 @@ with open("data.txt") as f:
         assert isinstance(number, Pair)
         numbers.append(number)
 
-    print(Pair.add(numbers[:2]))
+    print(Pair.add_all(numbers))

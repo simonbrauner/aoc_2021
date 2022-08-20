@@ -35,6 +35,35 @@ class Pair:
         assert False
 
     def reduce(self) -> None:
+        while True:
+            if not self.explode():
+                break
+
+    def explode(self, depth: int = 1) -> bool:
+        if depth == 5:
+            assert (
+                isinstance(self.left, int)
+                and isinstance(self.right, int)
+                and self.parent is not None
+            )
+
+            self.increment_left(self.left)
+            self.increment_left(self.right)
+            if self.is_left:
+                self.parent.left = 0
+            else:
+                self.parent.right = 0
+
+            return True
+
+        return (isinstance(self.left, Pair) and self.left.explode(depth + 1)) or (
+            isinstance(self.right, Pair) and self.right.explode(depth + 1)
+        )
+
+    def increment_left(self, value: int) -> None:
+        pass
+
+    def increment_right(self, value: int) -> None:
         pass
 
     def __add__(self, other: Pair) -> Pair:
@@ -47,7 +76,7 @@ class Pair:
         current = pairs[0]
 
         for other in pairs[1:]:
-            current += Pair(current, other)
+            current += other
 
         return current
 

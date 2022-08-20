@@ -35,9 +35,37 @@ class Pair:
         assert False
 
     def reduce(self) -> None:
-        while True:
-            if not self.explode():
-                break
+        while self.explode() or self.split():
+            continue
+
+    def split(self) -> bool:
+        if isinstance(self.left, int):
+            if self.left >= 10:
+                self.create_new(self.left, True)
+                return True
+
+        elif self.left.split():
+            return True
+
+        if isinstance(self.right, int):
+            if self.right >= 10:
+                self.create_new(self.right, False)
+                return True
+
+        elif self.right.split():
+            return True
+
+        return False
+
+    def create_new(self, value: int, left: bool) -> None:
+        new = Pair(value // 2, (value // 2) + (value % 2))
+        new.parent = self
+
+        if left:
+            self.left = new
+        else:
+            self.right = new
+            new.is_left = False
 
     def explode(self, depth: int = 1) -> bool:
         if depth == 5:

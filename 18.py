@@ -9,6 +9,11 @@ class Pair:
     parent: None | Pair = None
     is_left: bool = True
 
+    def __init__(self, left: int | Pair, right: int | Pair):
+        self.left = left
+        self.right = right
+        self.become_parent()
+
     def become_parent(self) -> None:
         if isinstance(self.left, Pair):
             self.left.parent = self
@@ -29,17 +34,30 @@ class Pair:
             elif char == "]":
                 depth -= 1
             elif depth == 0 and char == ",":
-                new = cls(Pair.parse(raw[1:index]), Pair.parse(raw[index + 1 : -1]))
-                new.become_parent()
-                return new
+                return cls(Pair.parse(raw[1:index]), Pair.parse(raw[index + 1 : -1]))
 
         assert False
+
+    def reduce(self) -> None:
+        pass
+
+    @staticmethod
+    def add(pairs: list[Pair]) -> Pair:
+        current = pairs[0]
+
+        for other in pairs[1:]:
+            current = Pair(current, other)
+            current.reduce()
+
+        return current
 
 
 with open("data.txt") as f:
     numbers = []
 
     for line in f:
-        numbers.append(Pair.parse(line.strip()))
+        number = Pair.parse(line.strip())
+        assert isinstance(number, Pair)
+        numbers.append(number)
 
-    print(numbers)
+    print(Pair.add(numbers))

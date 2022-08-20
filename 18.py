@@ -1,25 +1,21 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
 
-@dataclass
 class Pair:
-    left: int | Pair
-    right: int | Pair
-    parent: None | Pair = None
-    is_left: bool = True
-
     def __init__(self, left: int | Pair, right: int | Pair):
         self.left = left
         self.right = right
-        self.become_parent()
+        self.parent = None
+        self.is_left = True
 
-    def become_parent(self) -> None:
         if isinstance(self.left, Pair):
             self.left.parent = self
         if isinstance(self.right, Pair):
             self.right.parent = self
             self.right.is_left = False
+
+    def __repr__(self) -> str:
+        return f"[{self.left},{self.right}]"
 
     @classmethod
     def parse(cls, raw: str) -> int | Pair:
@@ -60,4 +56,4 @@ with open("data.txt") as f:
         assert isinstance(number, Pair)
         numbers.append(number)
 
-    print(Pair.add(numbers))
+    print(Pair.add(numbers[:2]))

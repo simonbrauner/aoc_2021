@@ -42,10 +42,7 @@ with open("data.txt") as f:
 
     rules = {}
 
-    while True:
-        line = f.readline().strip()
-        if line == "":
-            break
+    while (line := f.readline().strip()) != "":
         split = line.split(" -> ")
         rules[split[0]] = split[1]
 

@@ -60,16 +60,10 @@ with open("data.txt") as f:
     enhancement = []
     image = []
 
-    while True:
-        line = f.readline().strip()
-        if line == "":
-            break
+    while (line := f.readline().strip()) != "":
         enhancement.extend([1 if x == "#" else 0 for x in line])
 
-    while True:
-        line = f.readline().strip()
-        if line == "":
-            break
+    while (line := f.readline().strip()) != "":
         image.append([1 if x == "#" else 0 for x in line.strip()])
 
     print(count_lit_pixels(enhance(enhancement, image, 2)))

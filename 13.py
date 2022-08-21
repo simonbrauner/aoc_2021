@@ -82,17 +82,11 @@ with open("data.txt") as f:
     dots = []
     instructions = []
 
-    while True:
-        line = f.readline().strip()
-        if line == "":
-            break
+    while (line := f.readline().strip()) != "":
         split = line.split(",")
         dots.append((int(split[0]), int(split[1])))
 
-    while True:
-        line = f.readline().strip()
-        if line == "":
-            break
+    while (line := f.readline().strip()) != "":
         instructions.append(create_instruction(line))
 
     print(first_fold_dot_count(create_paper(dots), instructions))

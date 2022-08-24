@@ -21,6 +21,12 @@ class Instruction:
         self.variable = split[1]
         self.value = split[2] if len(split) == 3 else None
 
+    def __repr__(self) -> str:
+        name_and_variable = f"{self.name} {self.variable}"
+        if self.name == "inp":
+            return name_and_variable
+        return name_and_variable + f" {self.value}"
+
     def evaluate(self, inputs: deque[int], variables: dict[str, int]) -> None:
         if self.name == "inp":
             variables[self.variable] = inputs.popleft()
@@ -39,12 +45,10 @@ def run_program(
     variables = {x: 0 for x in "wxyz"}
 
     for instruction in program:
-        if verbose:
-            print(variables)
         instruction.evaluate(inputs, variables)
+        if verbose:
+            print(f"{str(instruction): <12}{variables}")
 
-    if verbose:
-        print(variables)
     return variables
 
 
@@ -67,5 +71,3 @@ with open("data.txt") as f:
 
     for line in f:
         program.append(Instruction(line.strip()))
-
-    find_minimal_random_z_value(program)

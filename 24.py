@@ -1,5 +1,9 @@
 from collections.abc import Callable
 from collections import deque
+from random import randrange
+
+MIN_MODEL_NUMBER = 11111111111111
+MAX_MODEL_NUMBER = 99999999999999
 
 FUNCTIONS: dict[str, Callable[[int, int], int]] = {
     "add": lambda x, y: x + y,
@@ -28,14 +32,34 @@ class Instruction:
         variables[self.variable] = FUNCTIONS[self.name](variables[self.variable], value)
 
 
-def run_program(program: list[Instruction], string_number: str) -> dict[str, int]:
+def run_program(
+    program: list[Instruction], string_number: str, verbose: bool = False
+) -> dict[str, int]:
     inputs = deque([int(x) for x in string_number])
     variables = {x: 0 for x in "wxyz"}
 
     for instruction in program:
+        if verbose:
+            print(variables)
         instruction.evaluate(inputs, variables)
 
+    if verbose:
+        print(variables)
     return variables
+
+
+def find_minimal_random_z_value(program: list[Instruction]) -> None:
+    min_z = float("inf")
+
+    while True:
+        current = str(randrange(MIN_MODEL_NUMBER, MAX_MODEL_NUMBER + 1))
+        if "0" in current:
+            continue
+
+        variables = run_program(program, str(current))
+        if variables["z"] < min_z:
+            min_z = variables["z"]
+            print(f"{current}: {min_z}")
 
 
 with open("data.txt") as f:
@@ -44,4 +68,4 @@ with open("data.txt") as f:
     for line in f:
         program.append(Instruction(line.strip()))
 
-    print(run_program(program, str(10**14 - 1)))
+    find_minimal_random_z_value(program)

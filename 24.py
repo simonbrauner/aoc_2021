@@ -1,9 +1,5 @@
 from collections.abc import Callable
 from collections import deque
-from random import randrange
-
-MIN_MODEL_NUMBER = 11111111111111
-MAX_MODEL_NUMBER = 99999999999999
 
 FUNCTIONS: dict[str, Callable[[int, int], int]] = {
     "add": lambda x, y: x + y,
@@ -19,55 +15,45 @@ class Instruction:
         split = raw.split()
         self.name = split[0]
         self.variable = split[1]
-        self.value = split[2] if len(split) == 3 else None
+        self.value = split[2]
 
     def __repr__(self) -> str:
-        name_and_variable = f"{self.name} {self.variable}"
-        if self.name == "inp":
-            return name_and_variable
-        return name_and_variable + f" {self.value}"
+        return f"{self.name} {self.variable} {self.value}"
 
-    def evaluate(self, inputs: deque[int], variables: dict[str, int]) -> None:
-        if self.name == "inp":
-            variables[self.variable] = inputs.popleft()
-            return
-
-        assert self.value is not None
+    def evaluate(self, variables: dict[str, int]) -> None:
         value = variables[self.value] if self.value in variables else int(self.value)
 
         variables[self.variable] = FUNCTIONS[self.name](variables[self.variable], value)
 
 
 def run_program(
-    program: list[Instruction], string_number: str, verbose: bool = False
+    program: list[list[Instruction]], string_number: str, verbose: bool = False
 ) -> dict[str, int]:
     inputs = deque([int(x) for x in string_number])
     variables = {x: 0 for x in "wxyz"}
 
-    for instruction in program:
-        instruction.evaluate(inputs, variables)
-        if verbose:
-            print(f"{str(instruction): <12}{variables}")
+    for part in program:
+        variables["w"] = inputs.popleft()
+        for instruction in part:
+            instruction.evaluate(variables)
+            if verbose:
+                print(f"{str(instruction): <12}{variables}")
 
     return variables
 
 
-def find_minimal_random_z_value(program: list[Instruction]) -> None:
-    min_z = float("inf")
-
-    while True:
-        current = str(randrange(MIN_MODEL_NUMBER, MAX_MODEL_NUMBER + 1))
-        if "0" in current:
-            continue
-
-        variables = run_program(program, str(current))
-        if variables["z"] < min_z:
-            min_z = variables["z"]
-            print(f"{current}: {min_z}")
-
-
 with open("data.txt") as f:
     program = []
+    part: list[Instruction] = []
 
-    for line in f:
-        program.append(Instruction(line.strip()))
+    assert f.readline().strip() == "inp w"
+
+    while (line := f.readline().strip()) != "":
+        if line == "inp w":
+            program.append(part)
+            part = []
+        else:
+            part.append(Instruction(line))
+    program.append(part)
+
+    print(program)

@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from collections import deque
 
 FUNCTIONS: dict[str, Callable[[int, int], int]] = {
     "add": lambda x, y: x + y,
@@ -26,20 +25,31 @@ class Instruction:
         variables[self.variable] = FUNCTIONS[self.name](variables[self.variable], value)
 
 
-def run_program(
-    program: list[list[Instruction]], string_number: str, verbose: bool = False
-) -> dict[str, int]:
-    inputs = deque([int(x) for x in string_number])
-    variables = {x: 0 for x in "wxyz"}
+def run_program_part(
+    program: list[list[Instruction]], z: int, inputs: list[int]
+) -> bool:
+    if len(program) == len(inputs):
+        return z == 0
 
-    for part in program:
-        variables["w"] = inputs.popleft()
-        for instruction in part:
+    for digit in range(9, 0, -1):
+        variables = {"w": digit, "x": 0, "y": 0, "z": z}
+        inputs.append(digit)
+
+        for instruction in program[len(inputs) - 1]:
             instruction.evaluate(variables)
-            if verbose:
-                print(f"{str(instruction): <12}{variables}")
 
-    return variables
+        if run_program_part(program, variables["z"], inputs):
+            return True
+
+        inputs.pop()
+
+    return False
+
+
+def run_program(program: list[list[Instruction]]) -> int:
+    inputs: list[int] = []
+    run_program_part(program, 0, inputs)
+    return int("".join([str(x) for x in inputs]))
 
 
 with open("data.txt") as f:
@@ -56,4 +66,4 @@ with open("data.txt") as f:
             part.append(Instruction(line))
     program.append(part)
 
-    print(program)
+    print(run_program(program))

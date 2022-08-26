@@ -1,5 +1,9 @@
 from collections.abc import Callable
 
+
+HIGHEST_TO_LOWEST = range(9, 0, -1)
+LOWEST_TO_HIGHEST = range(1, 10)
+
 FUNCTIONS: dict[str, Callable[[int, int], int]] = {
     "add": lambda x, y: x + y,
     "mul": lambda x, y: x * y,
@@ -26,30 +30,42 @@ class Instruction:
 
 
 def run_program_part(
-    program: list[list[Instruction]], z: int, inputs: list[int]
+    program: list[list[Instruction]],
+    z: int,
+    inputs: list[int],
+    cache: set[tuple[int, int, int]],
+    digit_order: range,
 ) -> bool:
     if len(program) == len(inputs):
         return z == 0
 
-    for digit in range(9, 0, -1):
+    for digit in digit_order:
+        cache_item = digit, len(inputs), z
+        if cache_item in cache:
+            return False
+
         variables = {"w": digit, "x": 0, "y": 0, "z": z}
         inputs.append(digit)
 
         for instruction in program[len(inputs) - 1]:
             instruction.evaluate(variables)
 
-        if run_program_part(program, variables["z"], inputs):
+        if run_program_part(program, variables["z"], inputs, cache, digit_order):
             return True
 
+        cache.add(cache_item)
         inputs.pop()
 
     return False
 
 
-def run_program(program: list[list[Instruction]]) -> int:
-    inputs: list[int] = []
-    run_program_part(program, 0, inputs)
-    return int("".join([str(x) for x in inputs]))
+def print_edge_model_numbers(program: list[list[Instruction]]) -> None:
+    cache: set[tuple[int, int, int]] = set()
+
+    for digit_range in HIGHEST_TO_LOWEST, LOWEST_TO_HIGHEST:
+        inputs: list[int] = []
+        run_program_part(program, 0, inputs, cache, digit_range)
+        print(int("".join([str(x) for x in inputs])))
 
 
 with open("data.txt") as f:
@@ -66,4 +82,4 @@ with open("data.txt") as f:
             part.append(Instruction(line))
     program.append(part)
 
-    print(run_program(program))
+    print_edge_model_numbers(program)

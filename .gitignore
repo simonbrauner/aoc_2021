@@ -7,3 +7,5 @@
 !*.py
 !Pipfile
 !Pipfile.lock
+
+!*.jpg

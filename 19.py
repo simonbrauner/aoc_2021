@@ -1,24 +1,43 @@
+from collections.abc import Callable
 from collections import defaultdict
 
 
 Coordinates = tuple[int, ...]
 
 
+ORIENTATIONS: list[Callable[[Coordinates], Coordinates]] = [
+    (lambda x: (x[0], x[1], x[2])),
+    (lambda x: (x[0], x[2], -x[1])),
+    (lambda x: (x[0], -x[1], -x[2])),
+    (lambda x: (x[0], -x[2], x[1])),
+    (lambda x: (-x[0], -x[1], x[2])),
+    (lambda x: (-x[0], x[2], x[1])),
+    (lambda x: (-x[0], x[1], -x[2])),
+    (lambda x: (-x[0], -x[2], -x[1])),
+    (lambda x: (x[1], x[2], x[0])),
+    (lambda x: (x[1], x[0], -x[2])),
+    (lambda x: (x[1], -x[2], -x[0])),
+    (lambda x: (x[1], -x[0], x[2])),
+    (lambda x: (-x[1], -x[2], x[0])),
+    (lambda x: (-x[1], x[0], x[2])),
+    (lambda x: (-x[1], x[2], -x[0])),
+    (lambda x: (-x[1], -x[0], -x[2])),
+    (lambda x: (x[2], x[0], x[1])),
+    (lambda x: (x[2], x[1], -x[0])),
+    (lambda x: (x[2], -x[0], -x[1])),
+    (lambda x: (x[2], -x[1], x[0])),
+    (lambda x: (-x[2], -x[0], x[1])),
+    (lambda x: (-x[2], x[1], x[0])),
+    (lambda x: (-x[2], x[0], -x[1])),
+    (lambda x: (-x[2], -x[1], -x[0])),
+]
+
+
 def all_orientations(coordinates: Coordinates) -> set[Coordinates]:
     result: set[Coordinates] = set()
-    x, y, z = coordinates
 
-    for _ in range(3):
-        result.add((x, y, z))
-        result.add((x, z, -y))
-        result.add((x, -y, -z))
-        result.add((x, -z, y))
-        result.add((-x, -y, z))
-        result.add((-x, z, y))
-        result.add((-x, y, -z))
-        result.add((-x, -z, -y))
-
-        x, y, z = y, z, x
+    for orientation_index in range(len(ORIENTATIONS)):
+        result.add(ORIENTATIONS[orientation_index](coordinates))
 
     return result
 
@@ -60,7 +79,9 @@ def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
         first_scanner = unprocessed.pop()
         for second_scanner in range(len(data)):
             if second_scanner not in positions:
-                computed_position = second_scanner_position(data[first_scanner], data[second_scanner])
+                computed_position = second_scanner_position(
+                    data[first_scanner], data[second_scanner]
+                )
                 if computed_position is not None:
                     positions[second_scanner] = computed_position
                     unprocessed.append(second_scanner)

@@ -33,6 +33,14 @@ ORIENTATIONS: list[Callable[[Coordinates], Coordinates]] = [
 ]
 
 
+def change_orientation(
+    data: list[list[Coordinates]], scanner_index: int, orientation_index: int
+) -> None:
+    data[scanner_index] = [
+        ORIENTATIONS[orientation_index](x) for x in data[scanner_index]
+    ]
+
+
 def position_second_scanner_relative_to_first(
     first_beacon: Coordinates, second_beacon: Coordinates
 ) -> Coordinates:
@@ -41,7 +49,7 @@ def position_second_scanner_relative_to_first(
 
 def second_scanner_position(
     first_scanner: list[Coordinates], second_scanner: list[Coordinates]
-) -> None | Coordinates:
+) -> None | tuple[Coordinates, int]:
     for orientation_index in range(len(ORIENTATIONS)):
         second_positions: defaultdict[Coordinates, int] = defaultdict(int)
 
@@ -57,7 +65,7 @@ def second_scanner_position(
         assert len(with_enough_beacons) <= 1
 
         if len(with_enough_beacons) == 1:
-            return with_enough_beacons[0]
+            return with_enough_beacons[0], orientation_index
 
     return None
 
@@ -74,8 +82,14 @@ def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
                     data[first_scanner], data[second_scanner]
                 )
                 if computed_position is not None:
-                    positions[second_scanner] = computed_position
                     unprocessed.add(second_scanner)
+                    positions[second_scanner] = tuple(
+                        [
+                            positions[first_scanner][x] + computed_position[0][x]
+                            for x in range(3)
+                        ]
+                    )
+                    change_orientation(data, second_scanner, computed_position[1])
 
     return positions
 

@@ -33,6 +33,10 @@ ORIENTATIONS: list[Callable[[Coordinates], Coordinates]] = [
 ]
 
 
+def coordinate_sum(first: Coordinates, second: Coordinates) -> Coordinates:
+    return tuple([first[x] + second[x] for x in range(len(first))])
+
+
 def change_orientation(
     data: list[list[Coordinates]], scanner_index: int, orientation_index: int
 ) -> None:
@@ -83,15 +87,23 @@ def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
                 )
                 if computed_position is not None:
                     unprocessed.add(second_scanner)
-                    positions[second_scanner] = tuple(
-                        [
-                            positions[first_scanner][x] + computed_position[0][x]
-                            for x in range(3)
-                        ]
+                    positions[second_scanner] = coordinate_sum(
+                        positions[first_scanner], computed_position[0]
                     )
                     change_orientation(data, second_scanner, computed_position[1])
 
     return positions
+
+
+def beacon_count(data: list[list[Coordinates]]) -> int:
+    beacons = set()
+    positions = scanner_positions(data)
+
+    for scanner in range(len(data)):
+        for beacon in data[scanner]:
+            beacons.add(coordinate_sum(beacon, positions[scanner]))
+
+    return len(beacons)
 
 
 with open("data.txt") as f:
@@ -106,4 +118,4 @@ with open("data.txt") as f:
             data[scanner_index].append(tuple(coordinates))
         scanner_index += 1
 
-    print(scanner_positions(data))
+    print(beacon_count(data))

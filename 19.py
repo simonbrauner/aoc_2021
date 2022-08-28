@@ -52,6 +52,22 @@ def second_scanner_position(
     return None
 
 
+def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
+    positions: dict[int, Coordinates] = {0: (0, 0, 0)}
+    unprocessed = [0]
+
+    while len(data) != len(positions):
+        first_scanner = unprocessed.pop()
+        for second_scanner in range(len(data)):
+            if second_scanner not in positions:
+                computed_position = second_scanner_position(data[first_scanner], data[second_scanner])
+                if computed_position is not None:
+                    positions[second_scanner] = computed_position
+                    unprocessed.append(second_scanner)
+
+    return positions
+
+
 with open("data.txt") as f:
     data: list[list[Coordinates]] = []
     scanner_index = 0
@@ -64,4 +80,4 @@ with open("data.txt") as f:
             data[scanner_index].append(tuple(coordinates))
         scanner_index += 1
 
-    print(second_scanner_position(data[0], data[1]))
+    print(scanner_positions(data))

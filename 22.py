@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from collections import defaultdict
 
 
 @dataclass
@@ -34,6 +35,18 @@ def read_range(line: str, coordinate: str) -> tuple[int, int]:
     return int(left), int(right)
 
 
+def cubes_on_count(steps: list[Step]) -> int:
+    cubes = defaultdict(bool)
+
+    for step in [x for x in steps if x.in_initialization_procedure()]:
+        for x in range(step.min_x, step.max_x + 1):
+            for y in range(step.min_y, step.max_y + 1):
+                for z in range(step.min_z, step.max_z + 1):
+                    cubes[(x, y, z)] = step.on
+
+    return [x for x in cubes.values()].count(True)
+
+
 with open("data.txt") as f:
     steps = []
 
@@ -46,4 +59,4 @@ with open("data.txt") as f:
             Step(line.split(" ")[0] == "on", x[0], x[1], y[0], y[1], z[0], z[1])
         )
 
-    print([x for x in steps if x.in_initialization_procedure()])
+    print(cubes_on_count(steps))

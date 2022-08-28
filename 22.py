@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from collections.abc import Callable
 from collections import defaultdict
 
 
@@ -12,21 +13,6 @@ class Step:
     min_z: int
     max_z: int
 
-    def in_initialization_procedure(self) -> bool:
-        return all(
-            [
-                abs(x) <= 50
-                for x in [
-                    self.min_x,
-                    self.max_x,
-                    self.min_y,
-                    self.max_y,
-                    self.min_z,
-                    self.max_z,
-                ]
-            ]
-        )
-
 
 def read_range(line: str, coordinate: str) -> tuple[int, int]:
     split = line.split(f"{coordinate}=")[1].split(",")[0]
@@ -35,10 +21,28 @@ def read_range(line: str, coordinate: str) -> tuple[int, int]:
     return int(left), int(right)
 
 
-def cubes_on_count(steps: list[Step]) -> int:
+def in_initialization_procedure(step: Step) -> bool:
+    return all(
+        [
+            abs(x) <= 50
+            for x in [
+                step.min_x,
+                step.max_x,
+                step.min_y,
+                step.max_y,
+                step.min_z,
+                step.max_z,
+            ]
+        ]
+    )
+
+
+def cubes_on_count(
+    steps: list[Step], step_filter: None | Callable[[Step], bool] = None
+) -> int:
     cubes = defaultdict(bool)
 
-    for step in [x for x in steps if x.in_initialization_procedure()]:
+    for step in filter(step_filter, steps):
         for x in range(step.min_x, step.max_x + 1):
             for y in range(step.min_y, step.max_y + 1):
                 for z in range(step.min_z, step.max_z + 1):
@@ -59,4 +63,4 @@ with open("data.txt") as f:
             Step(line.split(" ")[0] == "on", x[0], x[1], y[0], y[1], z[0], z[1])
         )
 
-    print(cubes_on_count(steps))
+    print(cubes_on_count(steps, in_initialization_procedure))

@@ -33,15 +33,6 @@ ORIENTATIONS: list[Callable[[Coordinates], Coordinates]] = [
 ]
 
 
-def all_orientations(coordinates: Coordinates) -> set[Coordinates]:
-    result: set[Coordinates] = set()
-
-    for orientation_index in range(len(ORIENTATIONS)):
-        result.add(ORIENTATIONS[orientation_index](coordinates))
-
-    return result
-
-
 def position_second_scanner_relative_to_first(
     first_beacon: Coordinates, second_beacon: Coordinates
 ) -> Coordinates:
@@ -51,29 +42,29 @@ def position_second_scanner_relative_to_first(
 def second_scanner_position(
     first_scanner: list[Coordinates], second_scanner: list[Coordinates]
 ) -> None | Coordinates:
-    second_positions: defaultdict[Coordinates, int] = defaultdict(int)
+    for orientation_index in range(len(ORIENTATIONS)):
+        second_positions: defaultdict[Coordinates, int] = defaultdict(int)
 
-    for first_beacon in first_scanner:
-        for second_beacon in second_scanner:
-            for second_oriented in all_orientations(second_beacon):
+        for first_beacon in first_scanner:
+            for second_beacon in second_scanner:
                 second_positions[
                     position_second_scanner_relative_to_first(
-                        first_beacon, second_oriented
+                        first_beacon, ORIENTATIONS[orientation_index](second_beacon)
                     )
                 ] += 1
 
-    with_enough_beacons = [x for x in second_positions if second_positions[x] >= 12]
-    assert len(with_enough_beacons) <= 1
+        with_enough_beacons = [x for x in second_positions if second_positions[x] >= 12]
+        assert len(with_enough_beacons) <= 1
 
-    if len(with_enough_beacons) == 1:
-        return with_enough_beacons[0]
+        if len(with_enough_beacons) == 1:
+            return with_enough_beacons[0]
 
     return None
 
 
 def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
     positions: dict[int, Coordinates] = {0: (0, 0, 0)}
-    unprocessed = [0]
+    unprocessed = {0}
 
     while len(data) != len(positions):
         first_scanner = unprocessed.pop()
@@ -84,7 +75,7 @@ def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
                 )
                 if computed_position is not None:
                     positions[second_scanner] = computed_position
-                    unprocessed.append(second_scanner)
+                    unprocessed.add(second_scanner)
 
     return positions
 

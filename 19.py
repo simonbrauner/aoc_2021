@@ -95,15 +95,39 @@ def scanner_positions(data: list[list[Coordinates]]) -> dict[int, Coordinates]:
     return positions
 
 
-def beacon_count(data: list[list[Coordinates]]) -> int:
+def beacon_count(
+    data: list[list[Coordinates]], positions: dict[int, Coordinates]
+) -> int:
     beacons = set()
-    positions = scanner_positions(data)
 
     for scanner in range(len(data)):
         for beacon in data[scanner]:
             beacons.add(coordinate_sum(beacon, positions[scanner]))
 
     return len(beacons)
+
+
+def manhattan_distance(first: Coordinates, second: Coordinates) -> int:
+    return sum([abs(first[x] - second[x]) for x in range(len(first))])
+
+
+def largest_manhattan_distance(positions: dict[int, Coordinates]) -> int:
+    largest = 0
+
+    for first in positions.values():
+        for second in positions.values():
+            current = manhattan_distance(first, second)
+            if current > largest:
+                largest = current
+
+    return largest
+
+
+def print_ocean_statistics(data: list[list[Coordinates]]) -> None:
+    positions = scanner_positions(data)
+
+    print(beacon_count(data, positions))
+    print(largest_manhattan_distance(positions))
 
 
 with open("data.txt") as f:
@@ -118,4 +142,4 @@ with open("data.txt") as f:
             data[scanner_index].append(tuple(coordinates))
         scanner_index += 1
 
-    print(beacon_count(data))
+    print_ocean_statistics(data)

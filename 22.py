@@ -1,18 +1,29 @@
 from math import prod
-from dataclasses import dataclass
 from collections.abc import Callable
 from collections import defaultdict
 
 
-@dataclass
 class Cuboid:
-    on: bool
-    min_x: int
-    max_x: int
-    min_y: int
-    max_y: int
-    min_z: int
-    max_z: int
+    def __init__(
+        self,
+        on: bool,
+        min_x: int,
+        max_x: int,
+        min_y: int,
+        max_y: int,
+        min_z: int,
+        max_z: int,
+    ) -> None:
+        self.on = on
+        self.min_x = min_x
+        self.max_x = max_x
+        self.min_y = min_y
+        self.max_y = max_y
+        self.min_z = min_z
+        self.max_z = max_z
+
+        for min_c, max_c in [(min_x, max_x), (min_y, max_y), (min_z, max_z)]:
+            assert min_c <= max_c
 
     def __hash__(self) -> int:
         return hash(

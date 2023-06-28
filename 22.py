@@ -1,3 +1,4 @@
+from __future__ import annotations
 from math import prod
 from collections.abc import Callable
 
@@ -32,6 +33,9 @@ class Cuboid:
             + f" z={self.min_z}..{self.max_z}"
         )
 
+    def __eq__(self, other: object) -> bool:
+        return str(self) == str(other)
+
     def __hash__(self) -> int:
         return hash(
             (self.min_x, self.max_x, self.min_y, self.max_y, self.min_z, self.max_z)
@@ -57,12 +61,50 @@ class Cuboid:
         max_min_z = max(self.min_z, other.min_z)
         min_max_z = min(self.max_z, other.max_z)
 
-        if max_min_x > min_max_x or max_min_x > min_max_x or max_min_x > min_max_x:
+        if max_min_x > min_max_x or max_min_y > min_max_y or max_min_z > min_max_z:
             return None
 
         return Cuboid(
             False, max_min_x, min_max_x, max_min_y, min_max_y, max_min_z, min_max_z
         )
+
+    def separated(self, other: Cuboid) -> tuple[Cuboid, set[Cuboid]]:
+        middle = Cuboid(
+            self.on,
+            other.min_x,
+            other.max_x,
+            other.min_y,
+            other.max_y,
+            other.min_z,
+            other.max_z,
+        )
+        not_middle: set[Cuboid] = set()
+
+        for x in [
+            (self.min_x, other.min_x - 1),
+            (other.min_x, other.max_x),
+            (1 + other.max_x, self.max_x),
+        ]:
+            for y in [
+                (self.min_y, other.min_y - 1),
+                (other.min_y, other.max_y),
+                (1 + other.max_y, self.max_y),
+            ]:
+                for z in [
+                    (self.min_z, other.min_z - 1),
+                    (other.min_z, other.max_z),
+                    (1 + other.max_z, self.max_z),
+                ]:
+                    try:
+                        not_middle.add(
+                            Cuboid(self.on, x[0], x[1], y[0], y[1], z[0], z[1])
+                        )
+                    except AssertionError:
+                        pass
+
+        not_middle.remove(middle)
+
+        return middle, not_middle
 
     def cube_count(self) -> int:
         count = prod(

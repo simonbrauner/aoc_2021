@@ -142,14 +142,30 @@ def in_initialization_procedure(step: Cuboid) -> bool:
     )
 
 
-def cubes_on_count(
-    steps: list[Cuboid], step_filter: None | Callable[[Cuboid], bool] = None
-) -> int:
+def separate_cuboid(cuboid: Cuboid, intersection: Cuboid, cuboids: set[Cuboid]) -> None:
+    separated = cuboid.separated(intersection)
+
+    separated[0].on = not cuboid.on
+    cuboids.add(separated[0])
+
+    cuboids |= separated[1]
+
+
+def cubes_on_count(steps: list[Cuboid], step_filter: Callable[[Cuboid], bool]) -> int:
     cuboids: set[Cuboid] = {Cuboid.universe()}
-    print(cuboids)
 
     for step in filter(step_filter, steps):
-        cuboids.add(step)
+        new_cuboids: set[Cuboid] = set()
+
+        for cuboid in cuboids:
+            intersection = cuboid.intersection(step)
+
+            if intersection is not None and cuboid.on != step.on:
+                separate_cuboid(cuboid, intersection, new_cuboids)
+            else:
+                new_cuboids.add(cuboid)
+
+        cuboids = new_cuboids
 
     return sum([x.cube_count() for x in cuboids if x.on])
 
@@ -167,3 +183,4 @@ with open("data.txt") as f:
         )
 
     print(cubes_on_count(steps, in_initialization_procedure))
+    print(cubes_on_count(steps, lambda _: True))

@@ -6,12 +6,12 @@ class Cuboid:
     def __init__(
         self,
         on: bool,
-        min_x: int,
-        max_x: int,
-        min_y: int,
-        max_y: int,
-        min_z: int,
-        max_z: int,
+        min_x: float,
+        max_x: float,
+        min_y: float,
+        max_y: float,
+        min_z: float,
+        max_z: float,
     ) -> None:
         self.on = on
         self.min_x = min_x
@@ -37,14 +37,29 @@ class Cuboid:
             (self.min_x, self.max_x, self.min_y, self.max_y, self.min_z, self.max_z)
         )
 
+    @classmethod
+    def universe(cls) -> "Cuboid":
+        return cls(
+            False,
+            float("-inf"),
+            float("inf"),
+            float("-inf"),
+            float("inf"),
+            float("-inf"),
+            float("inf"),
+        )
+
     def cube_count(self) -> int:
-        return prod(
+        count = prod(
             [
                 self.max_x - self.min_x + 1,
                 self.max_y - self.min_y + 1,
                 self.max_z - self.min_z + 1,
             ]
         )
+
+        assert abs(count) != float("inf")
+        return int(count)
 
 
 def read_range(line: str, coordinate: str) -> tuple[int, int]:
@@ -73,12 +88,13 @@ def in_initialization_procedure(step: Cuboid) -> bool:
 def cubes_on_count(
     steps: list[Cuboid], step_filter: None | Callable[[Cuboid], bool] = None
 ) -> int:
-    on: set[Cuboid] = set()
+    cuboids: set[Cuboid] = {Cuboid.universe()}
+    print(cuboids)
 
     for step in filter(step_filter, steps):
-        on.add(step)
+        cuboids.add(step)
 
-    return sum([x.cube_count() for x in on])
+    return sum([x.cube_count() for x in cuboids if x.on])
 
 
 with open("data.txt") as f:

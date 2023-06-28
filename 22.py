@@ -38,7 +38,7 @@ class Cuboid:
         )
 
     @classmethod
-    def universe(cls) -> "Cuboid":
+    def universe(cls) -> Cuboid:
         return cls(
             False,
             float("-inf"),
@@ -47,6 +47,21 @@ class Cuboid:
             float("inf"),
             float("-inf"),
             float("inf"),
+        )
+
+    def intersection(self, other: Cuboid) -> Cuboid | None:
+        max_min_x = max(self.min_x, other.min_x)
+        min_max_x = min(self.max_x, other.max_x)
+        max_min_y = max(self.min_y, other.min_y)
+        min_max_y = min(self.max_y, other.max_y)
+        max_min_z = max(self.min_z, other.min_z)
+        min_max_z = min(self.max_z, other.max_z)
+
+        if max_min_x > min_max_x or max_min_x > min_max_x or max_min_x > min_max_x:
+            return None
+
+        return Cuboid(
+            False, max_min_x, min_max_x, max_min_y, min_max_y, max_min_z, min_max_z
         )
 
     def cube_count(self) -> int:

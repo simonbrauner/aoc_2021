@@ -1,6 +1,5 @@
 from math import prod
 from collections.abc import Callable
-from collections import defaultdict
 
 
 class Cuboid:

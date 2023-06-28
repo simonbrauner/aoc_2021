@@ -24,6 +24,14 @@ class Cuboid:
         for min_c, max_c in [(min_x, max_x), (min_y, max_y), (min_z, max_z)]:
             assert min_c <= max_c
 
+    def __repr__(self) -> str:
+        return (
+            f'{"on" if self.on else "off"}'
+            + f" x={self.min_x}..{self.max_x}"
+            + f" y={self.min_y}..{self.max_y}"
+            + f" z={self.min_z}..{self.max_z}"
+        )
+
     def __hash__(self) -> int:
         return hash(
             (self.min_x, self.max_x, self.min_y, self.max_y, self.min_z, self.max_z)

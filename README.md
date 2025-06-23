@@ -1,1 +1,1 @@
-![GitHub Pipenv locked Python version](https://img.shields.io/github/pipenv/locked/python-version/simonbrauner/aoc)
+![Static Badge](https://img.shields.io/badge/python-3.10-blue)
